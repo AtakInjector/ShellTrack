@@ -2,41 +2,57 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Property;
 use App\Models\Owner;
 use App\Models\Category;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class PropertyController extends Controller
 {
-    //
-     public function index()
+    public function index()
     {
-        $properties = Property::all();
+        $properties = Property::with('images')->get();
+        
         return view('properties.index', compact('properties'));
     }
 
-     public function create()
+    public function create()
     {
         $owners = Owner::all();
         $categories = Category::all();
-        $agents = User::where('role', 'agent')->get();
+        $agents = User::all(); 
         
         return view('properties.create', compact('owners', 'categories', 'agents'));
     }
 
-      public function store(Request $request)
+    public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required',
-            'price' => 'required|numeric',
-            'owner_id' => 'required',
-            'category_id' => 'required',
-            'agent_id' => 'required',
+            'description' => 'required',
+            'price' => 'required|integer',
+            'owner_id' => 'required|exists:owners,id',
+            'category_id' => 'required|exists:categories,id',
+            'agent_id' => 'required|exists:users,id',
+            'property_type' => 'required',
+            'listing_date' => 'required|date'
         ]);
 
-        Property::create($request->all());
+        Property::create([
+            'title' => $request->title,
+            'description' => $request->description,
+            'address' => $request->address,
+            'city' => $request->city,
+            'country' => $request->country,
+            'price' => $request->price,
+            'bedrooms' => $request->bedrooms,
+            'bathrooms' => $request->bathrooms,
+            'property_type' => $request->property_type,
+            'listing_date' => $request->listing_date,
+            'owner_id' => $request->owner_id,
+            'category_id' => $request->category_id,
+            'agent_id' => $request->agent_id,
+        ]);
 
         return redirect()->route('properties.index')->with('success', 'Property added!');
     }
@@ -47,34 +63,49 @@ class PropertyController extends Controller
         return view('properties.show', compact('property'));
     }
 
-     public function edit($id)
+    public function edit($id)
     {
         $property = Property::findOrFail($id);
         $owners = Owner::all();
         $categories = Category::all();
-        $agents = User::where('role', 'agent')->get();
+        $agents = User::all();
         
         return view('properties.edit', compact('property', 'owners', 'categories', 'agents'));
     }
 
-
-     public function update(Request $request, $id)
+    public function update(Request $request, $id)
     {
         $request->validate([
-            'title' => 'required',
-            'price' => 'required|numeric',
-            'owner_id' => 'required',
-            'category_id' => 'required',
-            'agent_id' => 'required',
+            'description' => 'required',
+            'price' => 'required|integer',
+            'owner_id' => 'required|exists:owners,id',
+            'category_id' => 'required|exists:categories,id',
+            'agent_id' => 'required|exists:users,id',
+            'property_type' => 'required',
+            'listing_date' => 'required|date'
         ]);
 
         $property = Property::findOrFail($id);
-        $property->update($request->all());
+        
+        $property->update([
+            'description' => $request->description,
+            'address' => $request->address,
+            'city' => $request->city,
+            'country' => $request->country,
+            'price' => $request->price,
+            'bedrooms' => $request->bedrooms,
+            'bathrooms' => $request->bathrooms,
+            'property_type' => $request->property_type,
+            'listing_date' => $request->listing_date,
+            'owner_id' => $request->owner_id,
+            'category_id' => $request->category_id,
+            'agent_id' => $request->agent_id,
+        ]);
 
         return redirect()->route('properties.index')->with('success', 'Property updated!');
     }
 
-     public function destroy($id)
+    public function destroy($id)
     {
         Property::destroy($id);
         return redirect()->route('properties.index')->with('success', 'Property deleted!');

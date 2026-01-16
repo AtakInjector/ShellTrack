@@ -6,20 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('property_images', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('property_id')->constrained()->onDelete('cascade');
+            $table->string('image_path');                      // e.g. 'properties/123/photo-1.jpg'
+            $table->unsignedSmallInteger('order')->default(0); // for sorting images
             $table->timestamps();
+            
+            $table->index('property_id');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('property_images');

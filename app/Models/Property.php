@@ -31,12 +31,12 @@ class Property extends Model
 
       public function owner()
     {
-        return $this->belongsTo(Owner::class);
+        return $this->belongsTo(Owner::class, 'owner_id');
     }
 
      public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
     public function agent()
     {

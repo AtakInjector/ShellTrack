@@ -4,7 +4,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\OwnerController;
+use App\Http\Controllers\LoginController;
+Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
+Route::middleware('auth')->group(function(){
 // Dashboard
 Route::get('/', [DashboardController::class, 'index'])->name('home');
 
@@ -25,3 +30,5 @@ Route::get('/owners/{id}', [OwnerController::class, 'show'])->name('owners.show'
 Route::get('/owners/{id}/edit', [OwnerController::class, 'edit'])->name('owners.edit');
 Route::put('/owners/{id}', [OwnerController::class, 'update'])->name('owners.update');
 Route::delete('/owners/{id}', [OwnerController::class, 'destroy'])->name('owners.destroy');
+
+});
