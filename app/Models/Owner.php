@@ -12,4 +12,9 @@ class Owner extends Model
     "phone",
     "address"
    ];
+
+   public function properties()
+   {
+        return $this->hasMany(Property::class);
+   }
 }

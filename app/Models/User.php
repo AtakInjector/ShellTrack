@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -45,4 +46,25 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function properties()
+    {
+        return $this->hasMany(Property::class, 'agent_id');
+    }
+
+        public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+     public function isAgent()
+    {
+        return $this->role === 'agent';
+    }
+
+    public function getAgentsOnly($query)
+    {
+        return $query->where('role', 'agent');
+    }
+
 }
